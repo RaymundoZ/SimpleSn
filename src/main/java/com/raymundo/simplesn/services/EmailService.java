@@ -22,7 +22,7 @@ public class EmailService {
     @Value(value = "${email-service.domain:localhost}")
     private String domain;
 
-    @Value(value = "${email-service.port:}")
+    @Value(value = "${email-service.port:${server.port}}")
     private String port;
 
     @Value(value = "${email-service.use-https:false}")

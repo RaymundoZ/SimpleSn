@@ -1,5 +1,6 @@
 package com.raymundo.simplesn.controllers;
 
+import com.raymundo.simplesn.dto.UserLoginRequest;
 import com.raymundo.simplesn.dto.UserRequest;
 import com.raymundo.simplesn.exceptions.*;
 import com.raymundo.simplesn.services.AuthService;
@@ -31,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/login")
-    public void login(@Valid @RequestBody UserRequest userRequest, HttpServletRequest request,
+    public void login(@Valid @RequestBody UserLoginRequest userRequest, HttpServletRequest request,
                       HttpServletResponse response, BindingResult bindingResult) throws ValidationException {
         validate(bindingResult);
         authService.login(userRequest.username(), userRequest.password(), request, response);
@@ -42,7 +43,7 @@ public class AuthController {
         authService.logout(request, response);
     }
 
-    @PostMapping(value = "/enable/{token}")
+    @GetMapping(value = "/enable/{token}")
     public void enableAdmin(@PathVariable(value = "token") String token)
             throws UserNotFoundException, InvalidTokenException, TokenExpiredException, EnableNotAdminException {
         authService.enableAdmin(token);

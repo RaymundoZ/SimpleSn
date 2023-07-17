@@ -1,10 +1,7 @@
 package com.raymundo.simplesn.util;
 
 import com.raymundo.simplesn.entities.UserEntity;
-import com.raymundo.simplesn.exceptions.UserNotFoundException;
-import com.raymundo.simplesn.exceptions.UsernameAlreadyTakenException;
-import com.raymundo.simplesn.services.AuthService;
-import com.raymundo.simplesn.services.UserService;
+import com.raymundo.simplesn.repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,18 +10,25 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserInitializer {
 
-    private final AuthService authService;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @PostConstruct
-    public void createAdmin() throws UsernameAlreadyTakenException, UserNotFoundException {
-        authService.register("admin", "admin", "admin@gmail.com", true);
-        UserEntity user = userService.getUserByUsername("admin");
-        userService.changeUserRole(user, Role.ADMIN_ENABLED);
+    public void createAdmin() {
+        UserEntity user = new UserEntity();
+        user.setUsername("admin");
+        user.setPassword("admin");
+        user.setEmail("admin@gmail.com");
+        user.setRole(Role.ADMIN_ENABLED);
+        userRepository.save(user);
     }
 
     @PostConstruct
-    public void createUser() throws UsernameAlreadyTakenException {
-        authService.register("user", "user", "user@gmail.com", false);
+    public void createUser() {
+        UserEntity user = new UserEntity();
+        user.setUsername("user");
+        user.setPassword("user");
+        user.setEmail("user@gmail.com");
+        user.setRole(Role.USER);
+        userRepository.save(user);
     }
 }

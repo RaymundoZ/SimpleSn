@@ -33,8 +33,8 @@ public class PublicationController {
         publicationService.createPublication(publicationRequest.text());
     }
 
-    @PostMapping(value = "/edit/{publication_id}")
-    public void editPublication(@PathVariable(value = "publication_id")
+    @PostMapping(value = "/edit/{publicationId}")
+    public void editPublication(@PathVariable(value = "publicationId")
                                 String id,
 
                                 @Valid
@@ -48,8 +48,8 @@ public class PublicationController {
         publicationService.editPublication(UUID.fromString(id), publicationRequest.text());
     }
 
-    @DeleteMapping(value = "/remove/{publication_id}")
-    public void deletePublication(@PathVariable(value = "publication_id") String id)
+    @DeleteMapping(value = "/remove/{publicationId}")
+    public void deletePublication(@PathVariable(value = "publicationId") String id)
             throws PublicationNotFoundException, ValidationException, NoPermissionException {
         BindingResult bindingResult = new MapBindingResult(Map.of(), "");
         uuidValidator.validate(id, bindingResult);
@@ -62,8 +62,8 @@ public class PublicationController {
         return publicationService.getAllPublications();
     }
 
-    @GetMapping(value = "/get/{user_id}")
-    public List<PublicationResponse> getAllPublicationsByUser(@PathVariable(value = "user_id") String id)
+    @GetMapping(value = "/get/{userId}")
+    public List<PublicationResponse> getAllPublicationsByUser(@PathVariable(value = "userId") String id)
             throws UserNotFoundException, ValidationException {
         BindingResult bindingResult = new MapBindingResult(Map.of(), "");
         uuidValidator.validate(id, bindingResult);
