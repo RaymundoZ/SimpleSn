@@ -7,31 +7,29 @@ import com.raymundo.simplesn.exceptions.UserNotFoundException;
 import com.raymundo.simplesn.exceptions.UsernameAlreadyTakenException;
 import com.raymundo.simplesn.exceptions.ValidationException;
 import com.raymundo.simplesn.services.UserService;
-import com.raymundo.simplesn.validation.UUIDValidator;
+import com.raymundo.simplesn.validation.IsUUID;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.MapBindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/user")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
 
     private final UserService userService;
-    private final UUIDValidator uuidValidator;
 
     @PostMapping(value = "/edit/{userId}")
-    public void changeUserProfile(@PathVariable(value = "userId") String id,
+    public void changeUserProfile(@Valid @IsUUID @PathVariable(value = "userId") String id,
                                   @Valid @RequestBody UserRequest userRequest,
                                   BindingResult bindingResult)
             throws UserNotFoundException, NoPermissionException, UsernameAlreadyTakenException, ValidationException {
-        uuidValidator.validate(id, bindingResult);
         validate(bindingResult);
 
         userService.editUserProfile(UUID.fromString(id), userRequest.username(),
@@ -39,11 +37,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/get/{userId}")
-    public UserResponse getUserProfile(@PathVariable(value = "userId") String id)
-            throws ValidationException, UserNotFoundException, NoPermissionException {
-        BindingResult bindingResult = new MapBindingResult(Map.of(), "");
-        uuidValidator.validate(id, bindingResult);
-        validate(bindingResult);
+    public UserResponse getUserProfile(@Valid @IsUUID @PathVariable(value = "userId") String id)
+            throws UserNotFoundException, NoPermissionException {
         return userService.getUserProfile(UUID.fromString(id));
     }
 

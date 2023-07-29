@@ -11,7 +11,7 @@ import com.raymundo.simplesn.util.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class PublicationService {
     public void createPublication(String text) {
         PublicationEntity publication = new PublicationEntity();
         publication.setText(text);
-        publication.setCreationDate(new Date());
+        publication.setCreationDate(LocalDateTime.now());
         publication.setUser(userService.getCurrentUser());
         publicationRepository.save(publication);
     }

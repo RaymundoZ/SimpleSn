@@ -16,6 +16,11 @@ public class ValidationException extends Exception {
         status = HttpStatus.FORBIDDEN;
     }
 
+    public ValidationException(String message) {
+        this();
+        messages.add(message);
+    }
+
     public void addMessage(String message) {
         messages.add(message);
     }

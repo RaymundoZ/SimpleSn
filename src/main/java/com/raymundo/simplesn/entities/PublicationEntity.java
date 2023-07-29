@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +26,7 @@ public class PublicationEntity implements BaseEntity, ConvertableToDto<Publicati
     @Column(name = "creation_date")
     @Temporal(value = TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd.MM.yyyy, HH:mm:ss")
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     @ManyToOne
     private UserEntity user;

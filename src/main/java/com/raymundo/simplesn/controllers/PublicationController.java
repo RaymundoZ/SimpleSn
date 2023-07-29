@@ -7,24 +7,23 @@ import com.raymundo.simplesn.exceptions.PublicationNotFoundException;
 import com.raymundo.simplesn.exceptions.UserNotFoundException;
 import com.raymundo.simplesn.exceptions.ValidationException;
 import com.raymundo.simplesn.services.PublicationService;
-import com.raymundo.simplesn.validation.UUIDValidator;
+import com.raymundo.simplesn.validation.IsUUID;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.MapBindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/pub")
 @RequiredArgsConstructor
+@Validated
 public class PublicationController {
 
     private final PublicationService publicationService;
-    private final UUIDValidator uuidValidator;
 
     @PostMapping(value = "/add")
     public void createPublication(@Valid @RequestBody PublicationRequest publicationRequest, BindingResult bindingResult)
@@ -34,7 +33,9 @@ public class PublicationController {
     }
 
     @PostMapping(value = "/edit/{publicationId}")
-    public void editPublication(@PathVariable(value = "publicationId")
+    public void editPublication(@Valid
+                                @IsUUID
+                                @PathVariable(value = "publicationId")
                                 String id,
 
                                 @Valid
@@ -43,17 +44,13 @@ public class PublicationController {
 
                                 BindingResult bindingResult)
             throws PublicationNotFoundException, ValidationException, NoPermissionException {
-        uuidValidator.validate(id, bindingResult);
         validate(bindingResult);
         publicationService.editPublication(UUID.fromString(id), publicationRequest.text());
     }
 
     @DeleteMapping(value = "/remove/{publicationId}")
-    public void deletePublication(@PathVariable(value = "publicationId") String id)
-            throws PublicationNotFoundException, ValidationException, NoPermissionException {
-        BindingResult bindingResult = new MapBindingResult(Map.of(), "");
-        uuidValidator.validate(id, bindingResult);
-        validate(bindingResult);
+    public void deletePublication(@Valid @IsUUID @PathVariable(value = "publicationId") String id)
+            throws PublicationNotFoundException, NoPermissionException {
         publicationService.deletePublication(UUID.fromString(id));
     }
 
@@ -63,11 +60,8 @@ public class PublicationController {
     }
 
     @GetMapping(value = "/get/{userId}")
-    public List<PublicationResponse> getAllPublicationsByUser(@PathVariable(value = "userId") String id)
-            throws UserNotFoundException, ValidationException {
-        BindingResult bindingResult = new MapBindingResult(Map.of(), "");
-        uuidValidator.validate(id, bindingResult);
-        validate(bindingResult);
+    public List<PublicationResponse> getAllPublicationsByUser(@Valid @IsUUID @PathVariable(value = "userId") String id)
+            throws UserNotFoundException {
         return publicationService.getAllPublicationsByUser(UUID.fromString(id));
     }
 

@@ -4,25 +4,24 @@ import com.raymundo.simplesn.dto.UserLoginRequest;
 import com.raymundo.simplesn.dto.UserRequest;
 import com.raymundo.simplesn.exceptions.*;
 import com.raymundo.simplesn.services.AuthService;
-import com.raymundo.simplesn.validation.UUIDValidator;
+import com.raymundo.simplesn.validation.IsUUID;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.MapBindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/auth")
 @RequiredArgsConstructor
+@Validated
 public class AuthController {
 
     private final AuthService authService;
-    private final UUIDValidator uuidValidator;
 
     @PostMapping(value = "/register")
     public void register(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult)
@@ -32,8 +31,8 @@ public class AuthController {
     }
 
     @PostMapping(value = "/login")
-    public void login(@Valid @RequestBody UserLoginRequest userRequest, HttpServletRequest request,
-                      HttpServletResponse response, BindingResult bindingResult) throws ValidationException {
+    public void login(@Valid @RequestBody UserLoginRequest userRequest, BindingResult bindingResult,
+                      HttpServletRequest request, HttpServletResponse response) throws ValidationException {
         validate(bindingResult);
         authService.login(userRequest.username(), userRequest.password(), request, response);
     }
@@ -50,11 +49,8 @@ public class AuthController {
     }
 
     @PostMapping(value = "/send_again/{userId}")
-    public void sendEmailAgain(@PathVariable(value = "userId") String userId)
-            throws UserNotFoundException, EnableNotAdminException, ValidationException {
-        BindingResult bindingResult = new MapBindingResult(Map.of(), "");
-        uuidValidator.validate(userId, bindingResult);
-        validate(bindingResult);
+    public void sendEmailAgain(@Valid @IsUUID @PathVariable(value = "userId") String userId)
+            throws UserNotFoundException, EnableNotAdminException {
         authService.sendEmailAgain(UUID.fromString(userId));
     }
 

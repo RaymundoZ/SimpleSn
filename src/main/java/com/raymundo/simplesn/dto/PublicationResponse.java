@@ -3,7 +3,8 @@ package com.raymundo.simplesn.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.raymundo.simplesn.util.BaseDto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 public record PublicationResponse(
 
@@ -12,7 +13,7 @@ public record PublicationResponse(
         String text,
         String user,
 
-        @JsonFormat(pattern = "dd.MM.yyyy, HH:mm:ss", timezone = "Europe/Moscow")
-        Date creationDate
+        @JsonFormat(pattern = "dd.MM.yyyy, HH:mm:ss")
+        LocalDateTime creationDate
 ) implements BaseDto {
 }
